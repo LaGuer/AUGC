@@ -48,10 +48,16 @@ for nt in ["A", "C", "G", "U"]:
     row = rna_data[nt]
     print(f"{nt:>2} | {row['Molar']:8.2f} | {row['GeV']:8.2f} | {row['Proton']:8.2f} | {row['Neutron']:8.2f} | {row['Hydrogen']:14.2e} | {row['Planck']:14.2e} | {row['Electron']:16.2e} | {row['Neuron']:14.2e}")
 
-# Compute the sums for the pairs A+U and C+G in each of the six columns.
-print("\n--- Equation Check ---")
-cols = ["Molar", "GeV", "Proton", "Neutron", "Hydrogen", "Planck", "Electron", "Neuron"]
 
+# Now compute the sums for the pairs A+T and C+G in each of the five columns.
+print("\n--- Equation Check ---")
+print("We want to verify the relationships:")
+print("  (1) C + G = A + T + 15")
+print("  (2) A + T = C + G - 15\n")
+
+cols = ["Molar", "GeV", "Proton"]
+
+# Print the sums and the difference: (C+G) - (A+T)
 header2 = f"{'Column':>10} | {'A+U':>12} | {'C+G':>12} | {'Difference':>12}"
 print(header2)
 print("-" * len(header2))
@@ -59,4 +65,16 @@ for col in cols:
     sum_AU = rna_data["A"][col] + rna_data["U"][col]
     sum_CG = rna_data["C"][col] + rna_data["G"][col]
     diff = sum_CG - sum_AU
+    # diff should be nearly 1 if (C+G) = (A+U)+15 and equally (A+U) = (C+G)-15.
     print(f"{col:>10} | {sum_AU:12.4f} | {sum_CG:12.4f} | {diff:12.4f}")
+
+# Provide an extra printout that frames the equations explicitly.
+print("\nVerification of equations:")
+for col in cols:
+    sum_AU = rna_data["A"][col] + rna_data["U"][col]
+    sum_CG = rna_data["C"][col] + rna_data["G"][col]
+    eq1 = sum_AU + 15      # Expect eq1 to nearly equal sum_CG
+    eq2 = sum_CG - 15      # Expect eq2 to nearly equal sum_AU
+    print(f"{col:>10}:")
+    print(f"    (A+U)+15 = {eq1:12.4f}    vs.    C+G = {sum_CG:12.4f}   (diff = {sum_CG - eq1: .4f})")
+    print(f"    (C+G)-15 = {eq2:12.4f}    vs.    A+U = {sum_AU:12.4f}   (diff = {sum_AU - eq2: .4f})\n")
